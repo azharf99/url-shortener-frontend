@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -31,6 +32,7 @@ const UserManagement: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const { executeRecaptcha } = useGoogleReCaptcha();
   
   // Pagination & Search State
   const [searchTerm, setSearchTerm] = useState('');
@@ -68,6 +70,13 @@ const UserManagement: React.FC = () => {
     fetchUsers();
   }, [currentPage, searchTerm]);
 
+  const handleRecaptcha = async (action: string) => {
+    if (!executeRecaptcha) return null;
+    const token = await executeRecaptcha(action);
+    (window as any).captchaToken = token;
+    return token;
+  };
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
@@ -99,12 +108,14 @@ const UserManagement: React.FC = () => {
     e.preventDefault();
     try {
       if (editingUser) {
+        await handleRecaptcha('edit_user');
         await api.put(`/admin/users/${editingUser.id}`, {
           username: formData.username,
           email: formData.email,
           role: formData.role
         });
       } else {
+        await handleRecaptcha('create_user');
         await api.post('/admin/users', formData);
       }
       setIsModalOpen(false);
@@ -117,6 +128,7 @@ const UserManagement: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
     try {
+      await handleRecaptcha('delete_user');
       await api.delete(`/admin/users/${id}`);
       fetchUsers();
     } catch (err) {
@@ -127,7 +139,7 @@ const UserManagement: React.FC = () => {
   const totalPages = Math.ceil(totalCount / limit);
 
   return (
-    <div className="p-4 sm:p-6 lg:p-10 max-w-[1200px] mx-auto w-full space-y-8">
+    <div className="p-4 sm:p-6 lg:p-10 max-w-[1200px] mx-auto w-full space-y-8 text-[#e1e2ec]">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">User Base</h1>
@@ -246,7 +258,7 @@ const UserManagement: React.FC = () => {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="bg-[#1d2027] border border-[#32353c] w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col">
+          <div className="bg-[#1d2027] border border-[#32353c] w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col text-white">
             <div className="p-8 border-b border-[#32353c] flex justify-between items-center bg-[#272a31]/20">
               <h2 className="text-xl font-bold text-white uppercase tracking-tighter">
                 {editingUser ? 'Modify User' : 'Register User'}

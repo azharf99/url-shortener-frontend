@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 interface URL {
   id: number;
@@ -30,6 +31,7 @@ const Dashboard: React.FC = () => {
   const [error, setError] = useState('');
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { executeRecaptcha } = useGoogleReCaptcha();
   
   // Pagination & Search State
   const [searchTerm, setSearchTerm] = useState('');
@@ -65,10 +67,18 @@ const Dashboard: React.FC = () => {
     setCurrentPage(1); // Reset to first page on search
   };
 
+  const handleRecaptcha = async (action: string) => {
+    if (!executeRecaptcha) return null;
+    const token = await executeRecaptcha(action);
+    (window as any).captchaToken = token;
+    return token;
+  };
+
   const handleShorten = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     try {
+      await handleRecaptcha('shorten_url');
       await api.post('/shorten', { original_url: originalUrl });
       setOriginalUrl('');
       setCurrentPage(1);
@@ -81,6 +91,7 @@ const Dashboard: React.FC = () => {
   const handleDelete = async (id: number) => {
     if (!window.confirm('Are you sure you want to delete this URL?')) return;
     try {
+      await handleRecaptcha('delete_url');
       await api.delete(`/urls/${id}`);
       fetchUrls();
     } catch (err) {

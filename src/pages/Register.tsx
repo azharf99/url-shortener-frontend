@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import { Link as LinkIcon, User, Mail, Lock, ArrowRight, X, Check } from 'lucide-react';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -11,6 +12,14 @@ const Register: React.FC = () => {
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const handleRecaptcha = async (action: string) => {
+    if (!executeRecaptcha) return null;
+    const token = await executeRecaptcha(action);
+    (window as any).captchaToken = token;
+    return token;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,6 +27,7 @@ const Register: React.FC = () => {
     setSuccess('');
     setIsLoading(true);
     try {
+      await handleRecaptcha('registration');
       await api.post('/register', { username, email, password });
       setSuccess('Registration successful! Your account has been created.');
       setTimeout(() => navigate('/login'), 2000);
@@ -39,8 +49,8 @@ const Register: React.FC = () => {
           <div className="bg-[#10b981] p-3.5 sm:p-4 rounded-2xl shadow-lg shadow-[#10b981]/30 mb-4 sm:mb-6">
             <LinkIcon size={28} className="text-white sm:w-8 sm:h-8" />
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight text-center">Create Account</h2>
-          <p className="text-[#8c909f] mt-2 text-sm sm:text-base text-center">Join ShortenIt today</p>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight text-center text-emerald-400">Join ShortenIt</h2>
+          <p className="text-[#8c909f] mt-2 text-sm sm:text-base text-center font-medium">Create your professional account</p>
         </div>
 
         {error && (
@@ -63,7 +73,7 @@ const Register: React.FC = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
           <div>
-            <label className="block text-xs sm:text-sm font-semibold text-[#8c909f] mb-2 ml-1">Username</label>
+            <label className="block text-xs sm:text-sm font-semibold text-[#8c909f] mb-2 ml-1 tracking-widest uppercase">Username</label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 text-[#424754]" size={18} />
               <input
@@ -77,7 +87,7 @@ const Register: React.FC = () => {
             </div>
           </div>
           <div>
-            <label className="block text-xs sm:text-sm font-semibold text-[#8c909f] mb-2 ml-1">Email Address</label>
+            <label className="block text-xs sm:text-sm font-semibold text-[#8c909f] mb-2 ml-1 tracking-widest uppercase">Email Address</label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#424754]" size={18} />
               <input
@@ -91,7 +101,7 @@ const Register: React.FC = () => {
             </div>
           </div>
           <div>
-            <label className="block text-xs sm:text-sm font-semibold text-[#8c909f] mb-2 ml-1">Password</label>
+            <label className="block text-xs sm:text-sm font-semibold text-[#8c909f] mb-2 ml-1 tracking-widest uppercase">Security Key</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-[#424754]" size={18} />
               <input
@@ -111,7 +121,7 @@ const Register: React.FC = () => {
             disabled={isLoading}
             className="w-full bg-[#10b981] hover:bg-[#059669] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 sm:py-4 rounded-xl transition-all shadow-lg shadow-[#10b981]/20 flex items-center justify-center gap-2 group mt-2 active:scale-[0.98]"
           >
-            {isLoading ? 'Creating Account...' : 'Get Started'}
+            {isLoading ? 'Synchronizing...' : 'Create Account'}
             {!isLoading && <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform hidden sm:block" />}
           </button>
         </form>
