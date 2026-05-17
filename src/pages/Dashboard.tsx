@@ -122,7 +122,7 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Shorten Link Form */}
-      <div className="bg-[#1d2027] border border-[#32353c] p-6 sm:p-8 rounded-[2.5rem] shadow-2xl relative overflow-auto">
+      <div className="bg-[#1d2027] border border-[#32353c] p-6 sm:p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#3b82f6]/5 blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
         <h2 className="md:text-xl text-sm font-bold text-white mb-6 flex items-center gap-3 relative">
           <Plus className="text-[#3b82f6]" size={20} />
@@ -296,7 +296,7 @@ const Dashboard: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between text-[#8c909f] text-xs">
                   <div className="flex items-center gap-2">
                     <Calendar size={14} />
@@ -309,7 +309,7 @@ const Dashboard: React.FC = () => {
                     <span>Clicks</span>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-end gap-4 pt-3 border-t border-[#32353c]/50">
                   <a
                     href={url.original_url}
