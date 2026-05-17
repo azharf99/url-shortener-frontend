@@ -25,7 +25,7 @@ const Landing: React.FC = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="relative z-50 flex items-center justify-between px-6 py-8 max-w-7xl mx-auto">
+      <nav className="relative z-50 flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-0 px-6 py-8 max-w-7xl mx-auto">
         <div className="flex items-center gap-3">
           <div className="bg-[#3b82f6] p-2 rounded-xl shadow-lg shadow-[#3b82f6]/20">
             <LinkIcon size={24} className="text-white" />

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { 
-  Trash2, 
-  ExternalLink, 
-  Copy, 
-  Check, 
+import {
+  Trash2,
+  ExternalLink,
+  Copy,
+  Check,
   Link as LinkIcon,
   MousePointerClick,
   Calendar,
@@ -32,7 +32,7 @@ const Dashboard: React.FC = () => {
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { executeRecaptcha } = useGoogleReCaptcha();
-  
+
   // Pagination & Search State
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -109,7 +109,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-full w-full flex flex-col p-4 sm:p-6 lg:p-10 max-w-[1200px] mx-auto space-y-8 sm:space-y-10">
-      
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -122,9 +122,9 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Shorten Link Form */}
-      <div className="bg-[#1d2027] border border-[#32353c] p-6 sm:p-8 rounded-[2.5rem] shadow-2xl relative overflow-hidden">
+      <div className="bg-[#1d2027] border border-[#32353c] p-6 sm:p-8 rounded-[2.5rem] shadow-2xl relative overflow-auto">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#3b82f6]/5 blur-[80px] -translate-y-1/2 translate-x-1/2"></div>
-        <h2 className="text-xl font-bold text-white mb-6 flex items-center gap-3 relative">
+        <h2 className="md:text-xl text-sm font-bold text-white mb-6 flex items-center gap-3 relative">
           <Plus className="text-[#3b82f6]" size={20} />
           Create New Link
         </h2>
@@ -179,7 +179,7 @@ const Dashboard: React.FC = () => {
         <div className="p-6 sm:p-8 border-b border-[#32353c] bg-[#272a31]/20 space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <h3 className="text-lg font-black text-white">Link Management</h3>
-            
+
             {/* Search Box */}
             <div className="relative w-full md:w-64">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#424754]" size={18} />
@@ -194,7 +194,8 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left table-fixed min-w-[600px]">
             <thead className="bg-[#272a31]/50 text-[#8c909f] uppercase text-[10px] font-black tracking-widest">
               <tr>
@@ -244,17 +245,17 @@ const Dashboard: React.FC = () => {
                     </td>
                     <td className="px-8 py-6 text-right">
                       <div className="flex justify-end gap-3 lg:gap-4">
-                        <a 
-                          href={url.original_url} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
+                        <a
+                          href={url.original_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="text-[#8c909f] hover:text-white transition-colors"
                           title="Open Destination"
                         >
                           <ExternalLink size={18} />
                         </a>
-                        <button 
-                          onClick={() => handleDelete(url.id)} 
+                        <button
+                          onClick={() => handleDelete(url.id)}
                           className="text-[#8c909f] hover:text-red-400 transition-colors"
                           title="Remove Link"
                         >
@@ -269,9 +270,72 @@ const Dashboard: React.FC = () => {
           </table>
         </div>
 
+        {/* Mobile Card View */}
+        <div className="flex md:hidden flex-col divide-y divide-[#32353c]">
+          {isLoading ? (
+            <div className="p-10 text-center text-[#8c909f] font-bold">Synchronizing...</div>
+          ) : urls.length === 0 ? (
+            <div className="p-10 text-center text-[#8c909f]">No links found.</div>
+          ) : (
+            urls.map((url) => (
+              <div key={url.id} className="p-5 flex flex-col gap-4 hover:bg-[#272a31]/20 transition-all">
+                <div className="flex flex-col gap-1.5">
+                  <p className="text-[#c2c6d6] font-bold truncate leading-tight text-sm" title={url.original_url}>
+                    {url.original_url}
+                  </p>
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <span className="text-[#3b82f6] font-mono font-black text-xs truncate">
+                      {url.short_url}
+                    </span>
+                    <button
+                      onClick={() => copyToClipboard(url.short_url, url.id)}
+                      className="text-[#8c909f] hover:text-[#3b82f6] transition-colors shrink-0"
+                      title="Copy Short URL"
+                    >
+                      {copiedId === url.id ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between text-[#8c909f] text-xs">
+                  <div className="flex items-center gap-2">
+                    <Calendar size={14} />
+                    {new Date(url.created_at).toLocaleDateString()}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="bg-[#10131a] px-2 py-0.5 rounded-md font-black text-white border border-[#32353c] shrink-0">
+                      {url.clicks || 0}
+                    </span>
+                    <span>Clicks</span>
+                  </div>
+                </div>
+                
+                <div className="flex justify-end gap-4 pt-3 border-t border-[#32353c]/50">
+                  <a
+                    href={url.original_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#8c909f] hover:text-white transition-colors flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider"
+                    title="Open Destination"
+                  >
+                    <ExternalLink size={16} /> Open
+                  </a>
+                  <button
+                    onClick={() => handleDelete(url.id)}
+                    className="text-[#8c909f] hover:text-red-400 transition-colors flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider"
+                    title="Remove Link"
+                  >
+                    <Trash2 size={16} /> Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
         {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="p-6 border-t border-[#32353c] bg-[#272a31]/10 flex items-center justify-between">
+          <div className="p-6 border-t border-[#32353c] bg-[#272a31]/10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
             <p className="text-xs text-[#8c909f] font-black uppercase tracking-widest">
               Showing Page {currentPage} of {totalPages}
             </p>

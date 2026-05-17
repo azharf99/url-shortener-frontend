@@ -170,7 +170,8 @@ const UserManagement: React.FC = () => {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left">
             <thead className="bg-[#272a31]/50 text-[#8c909f] uppercase text-[10px] font-black tracking-widest">
               <tr>
@@ -214,10 +215,10 @@ const UserManagement: React.FC = () => {
                     </td>
                     <td className="px-8 py-6 text-right">
                       <div className="flex justify-end gap-4">
-                        <button onClick={() => handleOpenEditModal(user)} className="text-[#8c909f] hover:text-[#3b82f6] transition-colors">
+                        <button onClick={() => handleOpenEditModal(user)} className="text-[#8c909f] hover:text-[#3b82f6] transition-colors" title="Edit User">
                           <Edit size={20} />
                         </button>
-                        <button onClick={() => handleDelete(user.id)} className="text-[#8c909f] hover:text-red-400 transition-colors">
+                        <button onClick={() => handleDelete(user.id)} className="text-[#8c909f] hover:text-red-400 transition-colors" title="Delete User">
                           <Trash2 size={20} />
                         </button>
                       </div>
@@ -229,9 +230,57 @@ const UserManagement: React.FC = () => {
           </table>
         </div>
 
+        {/* Mobile Card View */}
+        <div className="flex md:hidden flex-col divide-y divide-[#32353c]">
+          {isLoading ? (
+            <div className="p-10 text-center text-[#8c909f] font-bold">Accessing Database...</div>
+          ) : users.length === 0 ? (
+            <div className="p-10 text-center text-[#8c909f]">No users found.</div>
+          ) : (
+            users.map((user) => (
+              <div key={user.id} className="p-5 flex flex-col gap-4 hover:bg-[#272a31]/20 transition-all">
+                <div className="flex items-center gap-4">
+                  <div className="h-12 w-12 rounded-full bg-[#3b82f6]/10 flex items-center justify-center text-[#3b82f6] shrink-0">
+                    <UserIcon size={24} />
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-bold text-white text-base truncate">{user.username}</span>
+                    <span className="text-[#c2c6d6] text-sm truncate">{user.email}</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between mt-2">
+                  <span className={cn(
+                    "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase border",
+                    user.role === 'admin' 
+                      ? "bg-[#3b82f6]/10 text-[#3b82f6] border-[#3b82f6]/20" 
+                      : "bg-[#424754]/10 text-[#8c909f] border-[#424754]/20"
+                  )}>
+                    {user.role === 'admin' && <Shield size={12} />}
+                    {user.role}
+                  </span>
+                  
+                  <span className="text-[#8c909f] text-xs">
+                    {new Date(user.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+                
+                <div className="flex justify-end gap-4 pt-4 border-t border-[#32353c]/50">
+                  <button onClick={() => handleOpenEditModal(user)} className="text-[#8c909f] hover:text-[#3b82f6] transition-colors flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider">
+                    <Edit size={16} /> Edit
+                  </button>
+                  <button onClick={() => handleDelete(user.id)} className="text-[#8c909f] hover:text-red-400 transition-colors flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider">
+                    <Trash2 size={16} /> Delete
+                  </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="p-6 border-t border-[#32353c] bg-[#272a31]/10 flex items-center justify-between">
+          <div className="p-6 border-t border-[#32353c] bg-[#272a31]/10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
             <p className="text-xs text-[#8c909f] font-black uppercase tracking-widest">
               Record {currentPage} / {totalPages}
             </p>
@@ -258,8 +307,8 @@ const UserManagement: React.FC = () => {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="bg-[#1d2027] border border-[#32353c] w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col text-white">
-            <div className="p-8 border-b border-[#32353c] flex justify-between items-center bg-[#272a31]/20">
+          <div className="bg-[#1d2027] border border-[#32353c] w-full max-w-md rounded-[2.5rem] shadow-2xl flex flex-col text-white max-h-[90vh] overflow-hidden">
+            <div className="p-8 border-b border-[#32353c] flex justify-between items-center bg-[#272a31]/20 shrink-0">
               <h2 className="text-xl font-bold text-white uppercase tracking-tighter">
                 {editingUser ? 'Modify User' : 'Register User'}
               </h2>
@@ -267,7 +316,8 @@ const UserManagement: React.FC = () => {
                 <X size={24} />
               </button>
             </div>
-            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+            <div className="overflow-y-auto">
+              <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-[#8c909f] uppercase tracking-widest ml-1">Username</label>
                 <input
@@ -321,6 +371,7 @@ const UserManagement: React.FC = () => {
                 </button>
               </div>
             </form>
+            </div>
           </div>
         </div>
       )}

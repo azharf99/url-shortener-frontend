@@ -44,7 +44,7 @@ const Register: React.FC = () => {
       <div className="absolute top-0 left-0 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-[#10b981]/10 rounded-full -translate-y-1/2 -translate-x-1/2 blur-[80px] sm:blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-0 right-0 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-[#3b82f6]/10 rounded-full translate-y-1/2 translate-x-1/2 blur-[80px] sm:blur-[120px] pointer-events-none"></div>
 
-      <div className="bg-[#1d2027] p-6 sm:p-8 md:p-10 rounded-3xl border border-[#32353c] shadow-2xl w-full max-w-md relative z-10">
+      <div className="bg-[#1d2027] p-6 sm:p-8 md:p-10 rounded-3xl border border-[#32353c] shadow-2xl w-full max-w-md relative z-10 max-h-[95vh] overflow-y-auto">
         <div className="flex flex-col items-center mb-8 sm:mb-10">
           <div className="bg-[#10b981] p-3.5 sm:p-4 rounded-2xl shadow-lg shadow-[#10b981]/30 mb-4 sm:mb-6">
             <LinkIcon size={28} className="text-white sm:w-8 sm:h-8" />
