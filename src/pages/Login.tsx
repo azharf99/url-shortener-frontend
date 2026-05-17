@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { Link as LinkIcon, User, Lock, ArrowRight, X } from 'lucide-react';
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import { GoogleLogin, useGoogleOneTapLogin, type CredentialResponse } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
@@ -15,6 +15,12 @@ const Login: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { executeRecaptcha } = useGoogleReCaptcha();
+
+  // Enable Google One Tap
+  useGoogleOneTapLogin({
+    onSuccess: (credentialResponse) => handleGoogleSuccess(credentialResponse),
+    onError: () => setError('Google One Tap Failed'),
+  });
 
   const handleRecaptcha = async (action: string) => {
     if (!executeRecaptcha) {
