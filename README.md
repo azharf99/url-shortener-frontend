@@ -1,73 +1,104 @@
-# React + TypeScript + Vite
+# URL Shortener Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, high-performance, and secure URL Shortener Frontend built with **React 19**, **TypeScript**, and **Tailwind CSS 4**. This project provides a professional interface for managing short links with real-time statistics and advanced security features.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ⚡ Features
 
-## React Compiler
+- **URL Shortening**: Easily create short, manageable links from long URLs.
+- **Dynamic Dashboard**: Real-time tracking of active links and total click impact.
+- **Secure Authentication**: 
+  - JWT-based authentication.
+  - Google OAuth integration.
+- **Advanced Security**: 
+  - reCAPTCHA v3 integration to prevent bot abuse.
+  - Protected routes and Admin-only user management.
+- **Modern UI/UX**:
+  - Built with **Tailwind CSS 4** for lightning-fast styling.
+  - Smooth animations using **Framer Motion**.
+  - Beautiful iconography from **Lucide React**.
+- **Management Tools**: 
+  - Search and pagination for link management.
+  - One-click copy to clipboard.
+  - Link deletion and destination preview.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## 🛠️ Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Framework**: React 19 (Vite)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **Animations**: Framer Motion
+- **Icons**: Lucide React
+- **HTTP Client**: Axios
+- **Auth**: `@react-oauth/google`, `jwt-decode`
+- **Security**: `react-google-recaptcha-v3`
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## 🚀 Getting Started
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Prerequisites
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- Node.js (Latest LTS recommended)
+- npm or yarn
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Installation
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd url-shortener-frontend
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup**:
+   Create a `.env` file in the root directory and add your configuration:
+   ```env
+   VITE_API_URL=http://localhost:8080/api
+   VITE_GOOGLE_CLIENT_ID=your-google-client-id
+   VITE_RECAPTCHA_SITE_KEY=your-recaptcha-site-key
+   ```
+
+4. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+
+5. **Build for production**:
+   ```bash
+   npm run build
+   ```
+
+---
+
+## 📂 Project Structure
+
+- `src/components`: Reusable UI components.
+- `src/context`: Authentication and global state management.
+- `src/pages`: Main application views (Dashboard, Landing, Login, etc.).
+- `src/services`: API client and backend communication.
+- `src/assets`: Static assets and images.
+
+---
+
+## 📄 License & Attribution
+
+This project is licensed under the **Apache License 2.0**.
+
+### Attribution Requirement
+According to the terms of the Apache License 2.0, any person or entity using, reproducing, or distributing this software (or derivative works thereof) **must provide clear attribution to the original author**:
+
+**Author: Azhar Faturohman Ahidin**
+
+For more details, please see the [LICENSE](./LICENSE) file.
+
+---
+
+Built with ❤️ by [Azhar Faturohman Ahidin](https://github.com/azharf99)
